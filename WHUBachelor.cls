@@ -245,15 +245,15 @@
 \def\maketitlepageE{
   \thispagestyle{empty}
   \begin{center}
-    {\heiti \zihao{5} \hfill 
+    %{\heiti \zihao{5} \hfill 
     %\begin{minipage}[t]{4.5cm}
      % 学号\ ：\uline{\hfill\hspace{3mm}\@stunum\hspace{3mm}\hfill} \\[2mm]
       %密级\ ：\uline{\hfill \hfill}
     %\end{minipage}}
-    \par \vspace*{6em}
-    {\songti \zihao{1} BACHELOR'S DEGREE THESIS\linebreak
+    \par \vspace*{4em}
+    {\songti \zihao{1} BACHELOR'S DEGREE THESIS\par\vspace{1em}
     OF WUHANUNIVERSITY}
-    \par \vspace{6em}
+    \par \vspace{4em}
     \begin{minipage}[c][6cm]{14cm}
         \setlength{\baselineskip}{32pt} 
         \centering {\heiti \zihao{2} \@ctitleE}
@@ -261,17 +261,16 @@
     \par \vspace{6em}
     {\songti \zihao{-3}
       \begin{tabular}{cl}
-        \makebox[4cm][s]{College:}   & \@cschoolE   \\[1ex]
-        \makebox[4cm][s]{Subject:}   & \@cmajorE    \\[1ex]
-        \makebox[4cm][s]{Name:}      & \@cauthorE   \\[1ex]
-        \makebox[4cm][s]{Instructor:}& \@cadvisorE  \\[1ex]
+        \makebox[4cm][s]{College :} & \@cschoolE   \\[1ex]
+        \makebox[4cm][s]{Subject :} & \@cmajorE    \\[1ex]
+        \makebox[4cm][s]{Name  :} & \@cauthorE   \\[1ex]
+        \makebox[4cm][s]{Instructor:} & \@cadvisorE  \\[1ex]
         & \@caadvisorE \\[1ex]
       \end{tabular}}
     \par \vspace{4em}
     {\songti \zihao{-2} \@cdateE}
   \end{center}
   \clearpage
-}
 }
 
 % 论文申明页
