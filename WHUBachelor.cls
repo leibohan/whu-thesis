@@ -200,6 +200,7 @@
 \def\cmajor#1{\def\@cmajor{#1}}\def\@cmajor{}         % 专业
 \def\cauthor#1{\def\@cauthor{#1}}\def\@cauthor{}      % 作者
 \def\cadvisor#1{\def\@cadvisor{#1}}\def\@cadvisor{}   % 老师
+\def\caadvisor#1{\def\@caadvisor{#1}}\def\@caadvisor{}   % 老师
 \def\cdate#1{\def\@cdate{#1}}\def\@cdate{}            % 日期
 
 % 论文标题页
@@ -225,8 +226,9 @@
         \makebox[4cm][s]{专\ 业\ 名\ 称\ ：}                                 & \@cmajor    \\[1ex]
         \makebox[4cm][s]{学\ 生\ 姓\ 名\ ：}                                 & \@cauthor   \\[1ex]
         \makebox[4cm][s]{指\ 导\ 教\ 师\ ：}                                 & \@cadvisor  \\[1ex]
+        & \@caadvisor \\[1ex]
       \end{tabular}}
-    \par \vspace{6em}
+    \par \vspace{4em}
     {\songti \zihao{-2} \@cdate}
   \end{center}
   \clearpage

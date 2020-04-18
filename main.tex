@@ -3,20 +3,23 @@
 %% Created by Fing
 
 \documentclass[]{WHUBachelor}
+\usepackage{multirow}
 
 \begin{document}
 %%----------- 封面部分 ----------- %%
-  \stunum{xxxxxxxxxxxxx}
-  \ctitle{\LaTeX{} Template for Undergraduate Thesis \linebreak Wuhan University \linebreak 毕业论文模板使用指南}
-  \cschool{院系名称}
-  \cmajor{专业名称}
-  \cauthor{作者姓名}
-  \cadvisor{教师姓名\quad 职称}
+  \stunum{雷伯涵}
+  \ctitle{一种图像-语义互译系统}
+  \cschool{弘毅学堂}
+  \cmajor{计算机科学与技术}
+  \cauthor{雷伯涵}
+  \cadvisor{庄越挺\quad 教\quad  授}
+  \caadvisor{黄\quad 浩\quad 副教授}
+  %\cadvisor{黄浩\quad 副教授}
   \cdate{二〇二〇年五月}
 
   \maketitlepage            % 封面
   \makestatement            % 申明
-
+  
 %%----------- 前言部分 ----------- %%
   \include{pages/abstract}  % 摘要
   \contents                 % 目录
@@ -26,7 +29,10 @@
   \include{pages/chapter2}
   \include{pages/chapter3}
   \include{pages/chapter4}
-
+  \include{pages/chapter5}
+  \include{pages/chapter6}
+  \include{pages/reference}
+ 
 %%----------- 结尾部分 ----------- %%
   \clearpage
   \phantomsection
