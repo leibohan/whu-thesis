@@ -203,6 +203,14 @@
 \def\caadvisor#1{\def\@caadvisor{#1}}\def\@caadvisor{}   % 老师
 \def\cdate#1{\def\@cdate{#1}}\def\@cdate{}            % 日期
 
+\def\ctitleE#1{\def\@ctitleE{#1}}\def\@ctitleE{}
+\def\cschoolE#1{\def\@cschoolE{#1}}\def\@cschoolE{}      % 院系
+\def\cmajorE#1{\def\@cmajorE{#1}}\def\@cmajorE{}         % 专业
+\def\cauthorE#1{\def\@cauthorE{#1}}\def\@cauthorE{}      % 作者
+\def\cadvisorE#1{\def\@cadvisorE{#1}}\def\@cadvisorE{}   % 老师
+\def\caadvisorE#1{\def\@caadvisorE{#1}}\def\@caadvisorE{}   % 老师
+\def\cdateE#1{\def\@cdateE{#1}}\def\@cdateE{}            % 日期
+
 % 论文标题页
 \def\maketitlepage{
   \thispagestyle{empty}
@@ -233,6 +241,38 @@
   \end{center}
   \clearpage
 }
+% 论文英文标题页
+\def\maketitlepageE{
+  \thispagestyle{empty}
+  \begin{center}
+    {\heiti \zihao{5} \hfill 
+    %\begin{minipage}[t]{4.5cm}
+     % 学号\ ：\uline{\hfill\hspace{3mm}\@stunum\hspace{3mm}\hfill} \\[2mm]
+      %密级\ ：\uline{\hfill \hfill}
+    %\end{minipage}}
+    \par \vspace*{6em}
+    {\songti \zihao{1} BACHELOR'S DEGREE THESIS\linebreak
+    OF WUHANUNIVERSITY}
+    \par \vspace{6em}
+    \begin{minipage}[c][6cm]{14cm}
+        \setlength{\baselineskip}{32pt} 
+        \centering {\heiti \zihao{2} \@ctitleE}
+    \end{minipage}
+    \par \vspace{6em}
+    {\songti \zihao{-3}
+      \begin{tabular}{cl}
+        \makebox[4cm][s]{College:}   & \@cschoolE   \\[1ex]
+        \makebox[4cm][s]{Subject:}   & \@cmajorE    \\[1ex]
+        \makebox[4cm][s]{Name:}      & \@cauthorE   \\[1ex]
+        \makebox[4cm][s]{Instructor:}& \@cadvisorE  \\[1ex]
+        & \@caadvisorE \\[1ex]
+      \end{tabular}}
+    \par \vspace{4em}
+    {\songti \zihao{-2} \@cdateE}
+  \end{center}
+  \clearpage
+}
+}
 
 % 论文申明页
 \def\makestatement{
@@ -251,7 +291,7 @@
 %%% ---- 摘要 ----- %%%
 % 中文摘要
 \newenvironment{cnabstract}[1]{
-	\def \cnkeyword {#1}
+	\def \cnkeyword{#1}
 	\clearpage
   \thispagestyle{empty}
 	% \addcontentsline{toc}{chapter}{摘要}
