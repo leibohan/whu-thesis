@@ -1,12 +1,71 @@
-% 文中引用说明
+% chapter 2
 
 \chapter{相关技术理论}
 
 \section{神经网络技术}
+本次设计中图片标注部分主要使用的技术基于长短期记忆循环神经网络。这一小节将介绍循环神经网络和长短期记忆的相关技术。
 
 \subsection{循环神经网络}
+循环神经网络的结构如图~\ref{fig:rnnc}所示，循环神经网络的输入比普通神经元多了一个$w$，也就是上一时序的自我输出。每一个神经元的计算方式可以表述为式\eqref{eq:rnn}。其中$x_t$代表$t$时刻神经元的输入，$s_t$代表$t$时刻神经元的状态，$o_t$代表$t$时刻神经元的输出。
+\begin{equation}
+  \begin{split}
+    s_t = f(u· x_t + w · s_{t-1}), \\
+    o_t = g(s_t·v).\hspace{1.8em}
+  \end{split}
+  \label{eq:rnn}
+\end{equation}
 
-\subsection{长短期记忆}
+%暂时不确定这里放什么图、放不放图
+\iffalse %注释开始
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/rnn_net.png}
+  \caption{循环神经网络结构}
+  \label{fig:rnn}
+\end{figure}
+\fi %注释结束
+
+\subsection{长短期记忆网络}
+从主体上看，LSTM与RNN类似，都是循环神经网络这样的链式结构。而在神经元上看，LSTM细胞节点要比普通的RNN节点要复杂一些。LSTM改进后的神经元由四个不同的神经网络层进行信息的交互，如图~\ref{fig:lstmc}所示。
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/lstmc.png}
+  \caption{LSTM神经元细胞结构图}
+  \label{fig:lstmc}
+\end{figure}
+\hspace{-2em}其中圆形代表基本操作，矩形代表学习得到的状态，箭头代表数据的传输，而箭头的分裂与合并则代表向量的拆分与连接；$s$代表状态，$x$代表输入，$h$代表输出。
+
+在图~\ref{fig:lstmc}中的上方长线段代表了神经网络的状态$s$，它在每个时刻的操作仅在两个地方与输入数据有交互，这就保证了$s$的变化不大，神经元状态比较稳定。LSTM神经元的数据更新由“门”来进行，三个门分别是输入门、遗忘门和输出门，LSTM神经元由此实现数据的更新和储存。
+
+门上的行为由一个点乘Pointwise操作和一个激活函数\textit{Sigmoid}所组成，该函数取值0至1，分别代表着允许部分信息通过——其中0代表不允许任何信息通过，1代表着允许所有信息通过。具体的门信息传递机制由以下几个部分完成：
+\begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
+  %\setlength{\parindent}{4em}
+  \item 遗忘门：决定历史信息的保留与遗忘。通过$Sigmoid$函数来决定状态$S$的遗忘程度。
+  \begin{equation}
+    f_t=\sigma(W_f[h_{t-1}, x_t]+b_f)
+    \label{forget}
+  \end{equation}
+  \item 输入门：决定存储到细胞状态内的新信息。先用$Sigmoid$函数决定记忆的更新程度，然后决定更新的内容，最后将更新的内容加在遗忘内容之上，形成当前时刻的状态。
+  \begin{equation}
+    \begin{split}
+      i_t=\sigma(W_i[h_{t-1}, x_t]+b_i)\hspace{0.2em}\\
+      \widetilde{C_t}=\tanh(W_c[h_{t-1}, x_t]+b_c)\hspace{-0.7em}\\
+      S_t = f_t·S_{t-1} + i_t · \widetilde{C_t}\hspace{1.1em}
+    \end{split}
+    \label{input}
+  \end{equation}
+  \item 输出门：决定输出的值。首先用\textit{Sigmoid}函数决定从状态中输出的部分，然后用$\tanh$对细胞状态进行处理，并与\textit{Sigmoid}函数值相乘，实现输出想输出的部分。
+  \begin{equation}
+    \begin{split}
+      o_t = \sigma(W_o[h_{t-1}, x_t] + b_o)\\
+      h_t = o_t*\tanh(S_t)\hspace{1.2em}
+    \end{split}
+    \label{output}
+  \end{equation}
+\end{enumerate}
+
+通过这三个门对神经元的共同作用，LSTM可以完成神经元的基本状态变换，从而完成较好的训练效果。
 
 \section{GAN生成模型选取使用}
 \subsection{基础GAN模型的缺陷}
@@ -14,9 +73,9 @@ GANs模型的缺点对应着优点，比较明显。由于GANs模型自由度太
 
 正因为GAN模型有着这诸多的缺点，所以要选取比较合适的GAN模型来生成图片。
 
-\begin{figure}[b]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]
+    \includegraphics[width=0.6\textwidth]
     {figures/ganprograss.jpeg}\\
     \caption{一般GAN网络模型结构}
     \label{fig:GAN}
@@ -48,7 +107,7 @@ Han Zhang et al.在2017年提出了StackGAN模型，创新性地提出了基于�
 StackGAN和CGAN同属于优化了GAN网络的构架结构的一类GAN模型的分支。其中，StackGAN是对相对朴素的CGAN模型的优化。
 
 \subsubsection{从CGAN到StackGAN}
-条件对抗生成网络(Conditional GAN, CGAN)是Mirza\upcite{mirza2014conditional}于2014年提出的，如公式\eqref{eq:CGAN}表述，对生成模型和判别模型输入文本信息作为条件，使用了一个隐藏层的全联通网络(MLP)结构，实现了通过文字标签生成图像的功能。但是，CGAN的模型结构简单，效果差，收敛速度慢。在CGAN中，我们将文本作为条件输入生成器和判别器来训练两个模型生成和判别图像。如图~\ref{fig:cgan手写数字}和图~\ref{fig:萌娘}所示，及时CGAN应用广且有趣，但图像较小，质量不高。最基础的CGAN算法只能生成$64\times64$像素的图片，经过后来的改进，也只能将图片质量提升到$128\times128$像素。
+条件对抗生成网络(Conditional GAN, CGAN)是Mirza\upcite{mirza2014conditional}于2014年提出的，如公式\eqref{eq:CGAN}表述，对生成模型和判别模型输入文本信息作为条件，使用了一个隐藏层的全联通网络(MLP)结构，实现了通过文字标签生成图像的功能。
 \begin{equation}
   \min_G\max_DV(G,D)=\mathbb{E}_{x\sim P_{data(x)}}[\lg D(x_i\mid y)]+\mathbb{E}_{x\sim P_G(z)}\lg [(1−D(G(z_i\mid y)))]
   \label{eq:CGAN}
@@ -64,13 +123,13 @@ StackGAN和CGAN同属于优化了GAN网络的构架结构的一类GAN模型的�
 \begin{figure*}[htbp] 
   \centering 
   \begin{minipage}[c]{0.6\textwidth} 
-    \begin{minipage}[c]{1\textwidth}
+    \begin{minipage}[c]{0.9\textwidth}
       \includegraphics[width=0.45\textwidth]{figures/cgan手写数字1.jpg}\hspace{0.5em}
       \includegraphics[width=0.45\textwidth]{figures/cgan手写数字2.jpg}
     \end{minipage} 
-    \hfill \\ \vspace{-0.5em}\\
-    \begin{minipage}[c]{1\textwidth}
-      \hspace{0.2em}
+    \hfill \\ \vspace{0.5em}\\
+    \begin{minipage}[c]{0.9\textwidth}
+      \hspace{0.22em}
       \includegraphics[width=0.45\textwidth]{figures/cgan手写数字3.jpg}\hspace{0.5em}
       \includegraphics[width=0.45\textwidth]{figures/cgan手写数字.jpg}
     \end{minipage}
@@ -87,6 +146,8 @@ StackGAN和CGAN同属于优化了GAN网络的构架结构的一类GAN模型的�
   \label{fig:萌娘} 
   \end{minipage} 
   \end{figure*}
+
+但是，CGAN的模型结构简单，效果差，收敛速度慢。在CGAN中，我们将文本作为条件输入生成器和判别器来训练两个模型生成和判别图像。如图~\ref{fig:cgan手写数字}和图~\ref{fig:萌娘}所示，及时CGAN应用广且有趣，但图像较小，质量不高。最基础的CGAN算法只能生成$64\times64$像素的图片，经过后来的改进，也只能将图片质量提升到$128\times128$像素。
 
   为了解决这一问题，Han Zhan\upcite{zhang2017stackgan}在2016年提出了StackGAN模型，使用基于栈的结构，分两步进行训练。
   
@@ -121,12 +182,14 @@ StackGAN和CGAN同属于优化了GAN网络的构架结构的一类GAN模型的�
   \end{figure}
 
 
-  StackGAN模型相比较于CGAN模型，可以生成更高清的图片，而且
+  StackGAN模型相比较于CGAN模型，可以生成更高清的图片，而且结构更为真实。
 
 \subsubsection{对StackGAN的进一步优化与运用}
 同一课题组紧接着提出了StackGAN++\upcite{zhang2018stackgan++}，对原有算法进一步进行了优化。StackGAN++模型也叫做StackGAN\_v2，对之前的StackGAN模型主要有三点改进。第一，改为采取树状结构作为输入，通过不同的生成器来生成不同尺寸的图片，多层次叠加形成了有位置关系的“假图片”，即混合图层叠加图片；第二，额外引入了非条件性的损失，直接将服从正态分布的损失$z$叠加在最后生成的“假图片”上；第三，引入了色彩限制，限制了最终“假图片”的色彩信息分布。
 
 李飞飞课题组的Johnson\upcite{Johnson_2018}在StackGAN模型之上，提出了自己的优化。
+
+该方法
 
 \section{本章小结}
 本章中我主要总结了本次技术方案的前置技术，包括神经网络中的LSTM-RNN长短期记忆循环神经网络模型和StackGAN模型及其相关技术。LSTM-RNN模型是一种相对稳定、收敛，可以一定程度上避免梯度消失的深度学习模型，主要为下一章实现图片标注方法的技术做好铺垫。StackGAN及其升级版本是Han Zhang及其他科研人员2016年其后提出的一系列理论，我简要介绍了它的背景、原理和与后续技术的比较，决定使用李飞飞课题组的场景图像生成方法作为实现的理论依据，也为下一章自然语言生成图片的方法做好了前置说明。

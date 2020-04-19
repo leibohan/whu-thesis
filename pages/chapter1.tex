@@ -27,7 +27,7 @@
 \subsubsection{神经网络简介}
 神经网络(Neural Networks)是近年比较流行的概念。在2006年Hiinton\upcite{hinton2006reducing}提出深度学习概念后，成为了优化算法表现性能的一大利器。
 
-神经网络的基本结构就是由神经元构成的网络，每个神经元结构如图~\ref{fig:nn}所示，输入输出关系如公式\eqref{eq:nn}表述结果。
+神经网络的基本结构就是由神经元构成的网络，每个神经元结构如图~\ref{fig:nnc}所示，输入输出关系如公式\eqref{eq:nn}表述结果。
 \begin{equation}
     \label{eq:nn}
     f( \sum\limits_{i=1}^{m} w_i x_i + b ) 
@@ -39,28 +39,28 @@
     x_k^j = \sum\limits_{i=1}^{n} w_ik x_ik, k\in \left[1,n\right]
 \end{equation}
 
-\begin{figure}[h]
+\begin{figure}[b]
     \centering
     \begin{minipage}[t]{0.4\linewidth}
         \centering
         \includegraphics[width=0.9\textwidth]
-        {figures/whulogo.png}\\
+        {figures/nnc.png}\\
         \caption{神经网络神经元}
-        \label{fig:nn}
+        \label{fig:nnc}
     \end{minipage}
-    \begin{minipage}[t]{0.4\linewidth}
+    \begin{minipage}[t]{0.5\linewidth}
         \centering
         \includegraphics[width=0.9\textwidth]
-        {figures/whulogo.png}\\
+        {figures/rnnc.png}\\
         \caption{循环神经网络神经元}
-        \label{fig:rnn}
+        \label{fig:rnnc}
     \end{minipage}
 \end{figure}
 
 \subsubsection{循环神经网络}
 循环神经网络(Recurrent Neural Networks, RNN)被广泛地运用在图像处理和自然语言处理上。与一般的神经网络相同，它也有前馈层和反馈层，但是它在一般的神经网络基础上增加了基于时序的循环机制。在一般的神经网络中，神经元之间相互独立，但是现实中的信息往往互相关联。所以，循环神经网络的特点像人一样有记忆的能力它的输出不仅依靠当前输入，也依靠历史的输出。在一定程度上，它更能反应真实的情况。
 
-RNN神经元的结构与BP神经网络神经元有些许不同。如图~\ref{fig:rnn}所示，任一隐藏层中神经元的输出信息依靠当前时刻的输入信息和前序时序的输出信息决定，同时当前时序的输出信息也会作为下一个神经元的输入。这样的神经网络构建了神经元之间的联系，让数据有了更为有效的依赖关系，优化了信息利用的效率。
+RNN神经元的结构与BP神经网络神经元有些许不同。如图~\ref{fig:rnnc}所示，任一隐藏层中神经元的输出信息依靠当前时刻的输入信息和前序时序的输出信息决定，同时当前时序的输出信息也会作为下一个神经元的输入。这样的神经网络构建了神经元之间的联系，让数据有了更为有效的依赖关系，优化了信息利用的效率。
 
 \subsubsection{长短期记忆}
 长短期记忆(Long Short Term Memory, LSTM)作为循环神经网络的一个分支变种，由Hochereiter和Schmidhuber在1997首先提出。在循环神经网络中，一个明显的问题就是参考的上文信息距离当前神经元很远时，就难以参考，影响会变得很小，原因在于梯度消失和梯度爆炸问题。LSTM可以保留重要信息，可以让距离比较远的重要文本对当前神经元产生比较大的影响，可以一定程度优化上下文分析的表现。
@@ -98,7 +98,8 @@ GANs的基本结构即由一个生成生成模型$G$和一个判别模型$D$组�
 第三阶段是近十年，大数据的积累帮助了自然语言处理的语料库丰富，促进了算法表现的提升；另一方面，音视频处理技术中深度学习的应用更为成熟了。其应用例如：2016年，Y Yao et al.\upcite{yao2016bi}提出了一种基于长短期记忆的中文分词方法，突破了上下文窗口大小限制，可以保存前文的重要信息；2015年Jie Zhou et al.\upcite{zhou2015end}提出了不使用解析的端到端SRL学习系统来分析语义，使用双向RNN，只使用文本作为输入功能，不使用语法知识。
 
 \subsubsection{自然语言应用例子：IBM Watson}
-%在2011年中，美国的一档综艺节目中，IBM公司云服务器bluemix平台上的Watson板块NLP技术相关产品大放异彩，当时因出色的对话表现爆红。
+2011年，在美国的一档综艺节目中，IBM公司云服务器bluemix平台上的Watson板块NLP技术相关产品大放异彩，当时因出色的对话表现爆红。
+
 在IBM bluemix云平台上的Watson板块，有多语言对应的多种NLP相关应用，包括语音识别、语音生成等，经过实际试用，发现目前制作水平比较完善，但是中文包的翻译效果比较差。经过调查与采访，我发现中文的翻译训练语料库主要是使用专业文件书籍构成，导致语言不够丰富。这也给了我们一个教训，在实际NLP训练中，一定要使用比较丰富、贴近日常生活的语料库。
 
 在我的研究中，我以英语为基础，使用了完整、丰富的MSCOCO-2014数据集。有八万多张图片作为训练集，另有四万多张图片作为测试集，且均带有相应的语义标注。这样完整的数据集更贴近一般语言环境，可以得到更好的训练效果。
