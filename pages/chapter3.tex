@@ -3,16 +3,48 @@
 \chapter{方案设计}
 
 \section{概要}
-软件设计
+软件设计主界面使用python的tkinter包来制作。其中，图片转化为
 
 \section{软件模型}
-软件分为三个部分
+软件分为三个部分，第一部分是软件界面，需要实现简洁明了的操作功能，方便使用。
+
+第二部分是图片标注功能。这一功能通过image caption算法
 
 \section{变量符号与定义}
+文中使用集合如下：
+\begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
+    \item $O$代表物品(object)的集合；
+    \item $C$代表物品目录(catagory)的集合；
+    \item $R$代表关系(relationship)的集合；
+    \item 
+\end{enumerate}
+
+文中脚标定义如下：
+\begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
+    \item ${}_t$代表LSTM模型中的时序，；
+    \item 
+\end{enumerate}
+
+文中小写字母对象定义如下：
+\begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
+    \item $O$代表物品(object)的集合；
+    \item 
+\end{enumerate}
+
+文中主要函数定义如下：
+\begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
+    \item $\phi$代表物品(object)的集合；
+    \item $\sigma$代表LSTM模型中的$sigmoid$函数；
+    \item 
+\end{enumerate}
 
 \section{软件设计}
 
 \subsection{图片标注方法}
+\subsubsection{算法整体模型}
+在这一模型中，要使用LSTM模型进行训练，训练出的模型放在主函数的调用函数中，实现图片翻译为自然语言的功能。
+
+这一模型主要分为
 
 \begin{algorithm}[H]
     \setstretch{1.5} % 代码间行距设定
@@ -30,6 +62,7 @@
     \caption{How to write algorithms}
   \end{algorithm}
 \subsection{自然语言生成图片方法}
+这一模型主要是用通过场景生成图像的GAN模型来训练，得到的模型放在主函数的调用函数中，实现自然语言生成图片的功能。
 
 \begin{algorithm}[H]
     \setstretch{1.5} % 代码间行距设定
@@ -47,7 +80,11 @@
     \caption{How to write algorithms}
   \end{algorithm}
 \section{本章小结}
+本章具体地介绍了这一设计中所包含的设计细节及其理论依据，并确定了软件构架的结构，为完成代码构建和实验设计打下了基础。
 
+本章中，确定了以python语言的tkinter库来写界面，保证界面简单简介易懂；用CNN和LSTM技术，基于注意力的方法，通过编码-解码的流程来完成图片标注功能；用基于位置场景的方法，由GNN和两个判别器构成的GAN模型来分步生成图片，最后生成合成图片的方法来实现由文本生成图片的功能。
+
+在下一章里，我会继续记述实验的过程及其表现。
 %{\songti \bfseries 宋体加粗} {\textbf{English}}
 
 %{\songti \itshape 宋体斜体} {\textit{English}}
