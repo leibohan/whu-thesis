@@ -3,12 +3,16 @@
 \chapter{方案设计}
 
 \section{概要}
-软件设计主界面使用python的tkinter包来制作。其中，图片转化为
+设计要求是：用户输入一张图片后，可以得到相应的标注语句，了解图片语义；在用户输入一句话的时候，可以得到描述这一句话的图片，直观“感受”文字。
+
+软件设计主界面使用python的tkinter包来制作。python是一个跨平台语言，用python制作方便产品在不同平台使用。界面中应当可以选择调动两个功能，分别是图片翻译为自然语言和语句翻译为图片。两个功能分别提前训练出成品模型，通过主界面按钮内嵌入的方法，调用对应模型进行计算。
 
 \section{软件模型}
 软件分为三个部分，第一部分是软件界面，需要实现简洁明了的操作功能，方便使用。
 
-第二部分是图片标注功能。这一功能通过image caption算法
+第二部分是图片标注功能。实现这一功能的模型通过image caption的模型进行训练，算法参照蒙特利尔大学Kevin Xu\upcite{xu2015show}提出的模型进行实现，并经过基于一个或多个数据集进行多个epoch的训练，比较选出表现较好的模型，嵌入到应用中使用。
+
+第三部分是文本生成图片功能。实现这一功能的模型通过一个特殊的GAN模型进行训练，并且要加入后期图片处理算法，以骗过判别器并使其更加真实。这一模型参照卡耐基-梅隆大学Justin Johnson\upcite{Johnson_2018}提出的基于场景双GAN模型配合进行实现，并经过合适的数据集训练，得到表现较好的模型，嵌入到应用当中使用。
 
 \section{变量符号与定义}
 文中使用集合如下：
@@ -38,31 +42,53 @@
     \item 
 \end{enumerate}
 
-\section{软件设计}
+\section{软件界面设计}
+对于预期的软件效果，我制作了原型图（图~\ref{fig:UIproto}）进行示意。
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/whulogo.png}
+    \caption{软件界面原型图}
+    \label{fig:UIproto}
+  \end{figure}
 
+  其中，界面上方由一组两个单选选项的选择栏和两个数据输入栏组成。选项栏的作用是选择当前需要实现的功能，由“图片翻译语义”和“文本翻译图片”两个选项组成；数据输入栏分别是一个文本输入栏和一个文件选择栏，分别对应着文本和图片的输入选择。
+
+  其下是一个明显的按钮，突出的设计可以让用户能轻易明白操作方法，也让用户更有仪式感，能感受到这一操作的划时代意义。
+
+  最下方的大区域是输出区域，根据功能的不同可以输出不同的内容。在选择图像翻译语义功能时，会输出一句话，这一行文字和图片将一起显示，方便对比观察；在选择语义生成图像选项时，将输出生成的图片和原语句，也是为了方便用户观察与分享，表意清晰。
+
+\section{软件功能设计}
+功能部分分为图片标注功能以及文字生成图像功能，两个功能我使用了两个结构相对复杂的深度学习模型组合构架的算法，将在下面具体介绍。
+ 
 \subsection{图片标注方法}
 \subsubsection{算法整体模型}
 在这一模型中，要使用LSTM模型进行训练，训练出的模型放在主函数的调用函数中，实现图片翻译为自然语言的功能。
 
-这一模型主要分为
+这一模型主要流程由四步组成。
 
-\begin{algorithm}[H]
-    \setstretch{1.5} % 代码间行距设定
-    \SetAlgoLined
-    \KwResult{Write here the result }
-     initialization\;
-     \While{While condition}{
-      instructions\;
-      \eIf{condition}{
-       instructions1\;
-       }{
-       instructions3\;
-      }
-     }
-    \caption{How to write algorithms}
-  \end{algorithm}
+\begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
+    \item 在模型中输入图片，作为输入信息；
+    \item 由卷积神经网络提取图片信息，形成图片特征信息（即后文编码步骤）；
+    \item 由注意力机制（attention）对所提取的图片特征信息进行处理，加强或抑制部分区域，作为后续输入LSTM的输入信息——在不同时刻，注意力信号会受到上一次LSTM的输出信息的影响，即注意力信号作为LSTM神经元细胞的状态，受到输出词语的影响而改变（这也是后文的解码部分）；
+    \item LSTM最终输出文本，形成最后的结果。
+\end{enumerate}
+
+\subsubsection{编码部分}
+第一步，要对训练集中的标注编码。
+
+第二部，对图片编码。使用一个卷积神经网络(Convolutional Neural Network, CNN)来对
+
+\subsubsection{解码部分}
+
+
+\subsubsection{代码实现模块}
+
+
 \subsection{自然语言生成图片方法}
 这一模型主要是用通过场景生成图像的GAN模型来训练，得到的模型放在主函数的调用函数中，实现自然语言生成图片的功能。
+
+
+\subsubsection{代码实现模块}
 
 \begin{algorithm}[H]
     \setstretch{1.5} % 代码间行距设定
