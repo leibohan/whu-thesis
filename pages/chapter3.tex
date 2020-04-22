@@ -83,7 +83,13 @@ $$y = {\textbf{y}_1, \textbf{y}_2, ..., \textbf{y}_C}, \textbf{y}_i\in \mathbb{R
 $$a = \{\textbf{a}_1, \textbf{a}_2, ... , \textbf{a}_L\}, \textbf{a}_i \in \mathcal{R}^D$$
 
 \subsubsection{解码部分}
-解码部分实用的技术是LSTM，即长短期记忆模型。解码后生成的是标注文本，在预测最后一个词的时候，需要背景向量、前一时刻的隐藏层向量、前一时刻的词。
+解码部分使用的技术是LSTM，即长短期记忆模型。解码后生成的是标注文本，在预测最后一个词的时候，需要背景向量、前一时刻的隐藏层向量、前一时刻的词。这一部分实用的LSTM模型结构，由图示意出。
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/lstm_token.png}
+    \caption{解码LSTM神经元细胞模型结构图}
+    \label{fig:lstm_tokenize}
+\end{figure}
 
 背景向量$\hat{z}_t$由注意力机制函数和图片注释向量计算得出，并且与时序$t$有关，随时序推进而变化。相当于是有选择地传输图片注释向量中的信息，是图片信息的动态表达。
 
@@ -107,10 +113,19 @@ $$a = \{\textbf{a}_1, \textbf{a}_2, ... , \textbf{a}_L\}, \textbf{a}_i \in \math
 
 计算出权重之后，即可使用注意力机制函数计算出背景向量$\hat{z}_t$:
 \begin{equation}
+    \label{eq:bgvector}
     \hat{z}_t=\phi(\textbf{a}_i,\alpha_i)
 \end{equation}
 \begin{equation}
     \hat{z}_t = \sum_i s_{t,i}\textbf{a}_i
+\end{equation}
+一个“软”估计得算法即如式\eqref{eq:softatt}的方法计算出。但是，还可以提出一种“硬”估计的
+\begin{equation}
+    \begin{aligned}
+        &&\phi(\{\textbf{a}_i\},\{\alpha_i\})&= \mathbb{E}_{p(s_t\mid a)} [\hat{z}_t] \\
+        && & =\sum_{i=1}^L \alpha_{t,i} \cdot \textbf{a}_i \\
+    \end{aligned}
+    \label{eq:softatt}
 \end{equation}
 
 现在定义一个概率的对数函数，计为$L_s$，作为模型的优化目标；对于训练的目标参数$W$，$L_s$函数就是优化目标。则可以推导得其下界为式\eqref{eq:hard1}所示，从而得到最终训练梯度为式\eqref{eq:lstmtar}
@@ -130,26 +145,37 @@ $$a = \{\textbf{a}_1, \textbf{a}_2, ... , \textbf{a}_L\}, \textbf{a}_i \in \math
 其中有
 \begin{equation}
     \tilde{s}_t \sim Multinoulli_L({\alpha_i})
+    \label{eq:stdistribute}
 \end{equation}
 
 则
 \begin{equation}
     \frac{\partial L_s}{\partial W} \approx \frac{1}{N} \sum_{i=1}^{n} [\frac{\partial \log p(\textbf{y}\mid \tilde{s}^n, \textbf{a} )}{\partial W} + \log p(\tilde{s}^n \mid \textbf{a} ) \frac{\partial \log p(\textbf{y}, \textbf{a})}{\partial W} ]
-    \label{eq:lstmtar}
+    \label{eq:lstmtar2}
 \end{equation}
 
 这里的函数$\phi$是利用了“软”确定注意力机制（Deterministic “Soft” Attention），这一机制算法可以稍为简易地作出注意力正确位置的判断，可以作出计算，用于判断下一个词的注意力位置；并且，这个函数的目的是计算注意力，而非前文从提取注意力。可以将$\hat{z}_t$的期望值$\mathbb{E} [\hat{z}_t]$作为其取值，带入计算，即设定$\phi$函数为式\eqref{eq:softatt}中的计算方法。
+
+从式\eqref{eq:lstmtar}中，可以看出优化函数$L_s$由基于蒙特卡罗方法多次采样逼近梯度的方式，对式\eqref{eq:stdistribute}遵从多次伯努力分布的注意力区域位置进行采样，测算优化函数。在这个时序数据中，为了消除，使用滑动平均基线的方法\upcite{10.5555/2074022.2074088}，令基线的对数更新比例如式\eqref{eq:baseline}所示。
 \begin{equation}
-    \begin{aligned}
-        &&\phi(\{\textbf{a}_i\},\{\alpha_i\})&= \mathbb{E}_{p(s_t\mid a)} [\hat{z}_t] \\
-        && & =\sum_{i=1}^L \alpha_{t,i} \cdot \textbf{a}_i \\
-    \end{aligned}
-    \label{eq:softatt}
+    \label{eq:baseline}
+    b_k = 0.9 \times b_{k-1} + 0.1 \times \log p(\textbf{y} \mid \tilde{s}_k, a)
 \end{equation}
-这样，我们可以估计出
+
+最终得到的“硬”注意力函数如式\eqref{eq:hard3}所示。
+\begin{equation}
+    \frac{\partial L_s}{\partial W} \approx \frac{1}{N} \sum_{i=1}^N\left[\frac{\partial \log p(\textbf{y}\mid \tilde{s}^n,\textbf{a})}{\partial W} + \lambda_r[]\log p(\textbf{y}\mid \tilde{s}^n,\textbf{a})-b] \frac{\partial \log p(\tilde{s}^n \mid \textbf{a})}{\partial W} +\lambda_e\frac{\partial H[\tilde{s}^n]}{\partial W}\right]
+    \label{eq:hard3}
+\end{equation}
+
+将其代回式\eqref{eq:bgvector}中的$\phi$函数，即可得出${\textbf{a}_i}$由“硬”选择注意力集中位置的参数${\alpha_i}$加权后的取样结果。
+
+解决了背景向量的问题，可以开始训练LSTM模型了。对于这个模型，需要进行初始化，确定其中图~\ref{fig:lstm_tokenize}标注的传入隐状态$h_0$及其内部初始环境$c_0$。取标注向量的平均，作为初始的状态，进行操作。即：
+$$\textbf{c}_0 = f_{init,c}\left(\frac{1}{L}\sum_{i=1}{L}\textbf{a}_i\right)$$
+$$\textbf{h}_0 = f_{init,c}\left(\frac{1}{L}\sum_{i=1}{L}\textbf{a}_i\right)$$
 
 
-测算
+
 \subsubsection{代码实现模块}
 
 
