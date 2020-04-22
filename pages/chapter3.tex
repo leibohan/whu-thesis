@@ -20,33 +20,35 @@
     \item $O$代表物品(object)的集合；
     \item $C$代表物品目录(catagory)的集合；
     \item $R$代表关系(relationship)的集合；
-    \item 
 \end{enumerate}
 
 文中脚标定义如下：
 \begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
-    \item ${}_t$代表LSTM模型中的时序，；
-    \item 
+    \item ${}_t$代表LSTM模型中的时序，${}_t$为当前时序，而${}_{t-1}$或${}_{t+1}$为前一或后一时序；
+    \item $_f$代表任一函数（使用$f$指代）代入当前操作或模型；
 \end{enumerate}
 
 文中小写字母对象定义如下：
 \begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
-    \item $O$代表物品(object)的集合；
+    \item $s$指代集合$S$中的元素，其中$S$指代任一集合，如物品集合$O$等，他们通常和集合一起出现；
+    \item $c$代表LSTM模型中的细胞(cell)，记录细胞当前状态；
+    \item $i$代表LSTM模型中的输入门(input)，执行LSTM模型中的输入操作；
+    \item $o$代表LSTM模型中的输出门(output)，执行LSTM模型中的输入操作；
+    \item $f$代表LSTM模型中的遗忘门(forget)，选择LSTM细胞的部分状态丢失；
     \item 
 \end{enumerate}
 
 文中主要函数定义如下：
 \begin{enumerate}[fullwidth,itemindent=2em,label=\arabic*.]
     \item $\phi$代表物品(object)的集合；
-    \item $\sigma$代表LSTM模型中的$sigmoid$函数；
     \item 
 \end{enumerate}
 
 \section{软件界面设计}
-对于预期的软件效果，我制作了原型图（图~\ref{fig:UIproto}）进行示意。
+对于预期的软件效果，我制作了原型图（图~\ref{fig:UIproto}）进行示意。图中，应当出现英文的地方用英文示意，应当出现路径的地方用路径示意，而应当出现中文的地方和说明文字使用中文表述。
 \begin{figure}[!htb]
     \centering
-    \includegraphics[width=0.6\textwidth]{figures/whulogo.png}
+    \includegraphics[width=0.8\textwidth]{figures/界面原型图.png}
     \caption{软件界面原型图}
     \label{fig:UIproto}
   \end{figure}
@@ -74,13 +76,33 @@
 \end{enumerate}
 
 \subsubsection{编码部分}
-第一步，要对训练集中的标注编码。
+第一步，要对训练集中的标注编码，形成特征向量。词典中已经预先确定了$K$个词语，对于每一行标注$y_i$，可以将其通过词典序号，将句子映射成输入向量，每一个元素的位置意义是序号，即图片相关的类别，数字则是关联度。编码之后生成向量$\textbf{y}_i$，一起构成输入矩阵。
+$$y = {\textbf{y}_1, \textbf{y}_2, ..., \textbf{y}_C}, \textbf{y}_i\in \mathbb{R}^K$$
 
-第二部，对图片编码。使用一个卷积神经网络(Convolutional Neural Network, CNN)来对
+第二步，对图片编码。使用一个卷积神经网络(Convolutional Neural Network, CNN)对图片的特征进行提取，从而形成图片编码。编码好的图片，后续会作为注释向量$\textbf{a}$使用。
+$$a = \{\textbf{a}_1, \textbf{a}_2, ... , \textbf{a}_L\}, \textbf{a}_i \in \mathcal{R}^D$$
 
 \subsubsection{解码部分}
+解码部分实用的技术是LSTM，即长短期记忆模型。解码后生成的是标注文本，在预测最后一个词的时候，需要背景向量、前一时刻的隐藏层向量、前一时刻的词。
 
+背景向量$\hat{z}_t$由注意力机制函数和图片注释向量计算得出，并且与时序$t$有关，随时序推进而变化。相当于是有选择地传输图片注释向量中的信息，是图片信息的动态表达。
 
+确定一个注意力机制函数$\phi$来计算$t$时刻的背景向量$\hat{z}_t$。对于输入的图片注释信息，为了推测这一位置是否是正确的注意力集中点，在式\eqref{eq:归一a}中定义一个可以归一化的参数$\alpha_{t,i}$来表示在$t$时刻，位置$i$是正确关注点的置信度。
+这个置信度由，计算背景向量
+\begin{equation}
+    e_{t,i}=f_{att}(\textbf{a}_i,\textbf{h}_t)
+\end{equation}
+\begin{equation}
+    \label{eq:归一a}
+    \alpha_{t,i}=\frac{\exp e_{t,i}}{\sum_{k=1}^{L}\exp e_{t,k}}
+\end{equation}
+
+计算出权重之后，即可使用注意力机制函数计算出背景向量$\hat{z}_t$:
+\begin{equation}
+    \hat{z}_t=\phi(\textbf{a}_i,\alpha_i)
+\end{equation}
+
+这里的函数$\phi$是利用了软注意力机制\upcite{bahdanau2014neural}，这一机制
 \subsubsection{代码实现模块}
 
 
