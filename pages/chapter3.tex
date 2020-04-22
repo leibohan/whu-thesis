@@ -88,7 +88,6 @@ $$a = \{\textbf{a}_1, \textbf{a}_2, ... , \textbf{a}_L\}, \textbf{a}_i \in \math
 背景向量$\hat{z}_t$由注意力机制函数和图片注释向量计算得出，并且与时序$t$有关，随时序推进而变化。相当于是有选择地传输图片注释向量中的信息，是图片信息的动态表达。
 
 确定一个注意力机制函数$\phi$来计算$t$时刻的背景向量$\hat{z}_t$。对于输入的图片注释信息，为了推测这一位置是否是正确的注意力集中点，在式\eqref{eq:归一a}中定义一个可以归一化的参数$\alpha_{t,i}$来表示在$t$时刻，位置$i$是正确关注点的置信度。
-这个置信度由，计算背景向量
 \begin{equation}
     e_{t,i}=f_{att}(\textbf{a}_i,\textbf{h}_t)
 \end{equation}
@@ -97,12 +96,60 @@ $$a = \{\textbf{a}_1, \textbf{a}_2, ... , \textbf{a}_L\}, \textbf{a}_i \in \math
     \alpha_{t,i}=\frac{\exp e_{t,i}}{\sum_{k=1}^{L}\exp e_{t,k}}
 \end{equation}
 
+计算置信度时需要用到$f_{att}$函数，这一函数定义为一个“硬”机会注意力机制函数。
+这一机会注意力机制的“软”版本由Bahdanau\upcite{bahdanau2014neural}提出，仿照这个机制可以提出硬版本函数。
+
+现在定义$s_t$为模型为了生成第$t$个单词所选择的注意力区域。其中，$s_t$的第$i$项是开关函数，此项置1时，当前模型生成打你是第i个单词。
+现设定多次伯努利分布的参数${\alpha_i}$，将背景向量视为随机事件，则有：
+\begin{equation}
+    p(s_{t,i} = 1|s_{j<t}, \textbf{a}) = \alpha_{t,i}
+\end{equation}
+
 计算出权重之后，即可使用注意力机制函数计算出背景向量$\hat{z}_t$:
 \begin{equation}
     \hat{z}_t=\phi(\textbf{a}_i,\alpha_i)
 \end{equation}
+\begin{equation}
+    \hat{z}_t = \sum_i s_{t,i}\textbf{a}_i
+\end{equation}
 
-这里的函数$\phi$是利用了软注意力机制\upcite{bahdanau2014neural}，这一机制
+现在定义一个概率的对数函数，计为$L_s$，作为模型的优化目标；对于训练的目标参数$W$，$L_s$函数就是优化目标。则可以推导得其下界为式\eqref{eq:hard1}所示，从而得到最终训练梯度为式\eqref{eq:lstmtar}
+\begin{equation}
+    \begin{aligned}
+        && L_s &= \sum_s p(s, \textbf{a}) \log p(\textbf{y}\mid {s }, \textbf{a} ) \\
+        && & \le \log \sum_sp(s, \textbf{a}) p(\textbf{y}\mid {s }, \textbf{a} ) \\
+        && & = \log p(\textbf{y}, \textbf{a})
+    \end{aligned}
+    \label{eq:hard1}
+\end{equation}
+\begin{equation}
+    \frac{\partial L_s}{\partial W} = \sum_s p(s \mid a) [\frac{\partial \log p(\textbf{y}\mid {s }, \textbf{a} )}{\partial W} + \log p(\textbf{y}\mid {s }, \textbf{a} ) \frac{\partial \log p(\textbf{y}, \textbf{a})}{\partial W} ]
+    \label{eq:lstmtar}
+\end{equation}
+
+其中有
+\begin{equation}
+    \tilde{s}_t \sim Multinoulli_L({\alpha_i})
+\end{equation}
+
+则
+\begin{equation}
+    \frac{\partial L_s}{\partial W} \approx \frac{1}{N} \sum_{i=1}^{n} [\frac{\partial \log p(\textbf{y}\mid \tilde{s}^n, \textbf{a} )}{\partial W} + \log p(\tilde{s}^n \mid \textbf{a} ) \frac{\partial \log p(\textbf{y}, \textbf{a})}{\partial W} ]
+    \label{eq:lstmtar}
+\end{equation}
+
+这里的函数$\phi$是利用了“软”确定注意力机制（Deterministic “Soft” Attention），这一机制算法可以稍为简易地作出注意力正确位置的判断，可以作出计算，用于判断下一个词的注意力位置；并且，这个函数的目的是计算注意力，而非前文从提取注意力。可以将$\hat{z}_t$的期望值$\mathbb{E} [\hat{z}_t]$作为其取值，带入计算，即设定$\phi$函数为式\eqref{eq:softatt}中的计算方法。
+\begin{equation}
+    \begin{aligned}
+        &&\phi(\{\textbf{a}_i\},\{\alpha_i\})&= \mathbb{E}_{p(s_t\mid a)} [\hat{z}_t] \\
+        && & =\sum_{i=1}^L \alpha_{t,i} \cdot \textbf{a}_i \\
+    \end{aligned}
+    \label{eq:softatt}
+\end{equation}
+这样，我们可以估计出
+
+
+测算
 \subsubsection{代码实现模块}
 
 
