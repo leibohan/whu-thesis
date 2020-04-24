@@ -4,9 +4,44 @@
 
 \section{神经网络技术}
 本次设计中图片标注部分主要使用的技术基于长短期记忆循环神经网络。这一小节将介绍循环神经网络和长短期记忆的相关技术。
+\subsection{神经网络}
+神经网络(Neural Networks)是近年比较流行的概念。在2006年Hiinton\upcite{hinton2006reducing}提出深度学习概念后，成为了优化算法表现性能的一大利器。
+
+神经网络的基本结构就是由神经元构成的网络，每个神经元结构如图~\ref{fig:nnc}所示，输入输出关系如式\eqref{eq:nn}表述结果。
+\begin{equation}
+    \label{eq:nn}
+    f( \sum\limits_{i=1}^{m} w_i x_i + b ) 
+\end{equation}
+
+对于第$j$层的每一个神经元，它会对上一层的每一个神经元输入的$x_i$赋予权重$w_i$，计算出输出结果，即如式\eqref{eq:nnj}所示，其中n是每一层的神经元个数，由输入神经元个数决定。
+\begin{equation}
+    \label{eq:nnj}
+    x_k^j = \sum\limits_{i=1}^{n} w_ik x_ik, k\in \left[1,n\right]
+\end{equation}
+
+\begin{figure}[b]
+    \centering
+    \begin{minipage}[t]{0.4\linewidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]
+        {figures/nnc.png}\\
+        \caption{神经网络神经元}
+        \label{fig:nnc}
+    \end{minipage}
+    \begin{minipage}[t]{0.5\linewidth}
+        \centering
+        \includegraphics[width=0.9\textwidth]
+        {figures/rnnc.png}\\
+        \caption{循环神经网络神经元}
+        \label{fig:rnnc}
+    \end{minipage}
+\end{figure}
 
 \subsection{循环神经网络}
-循环神经网络的结构如图~\ref{fig:rnnc}所示，循环神经网络的输入比普通神经元多了一个$w$，也就是上一时序的自我输出。每一个神经元的计算方式可以表述为式\eqref{eq:rnn}。其中$x_t$代表$t$时刻神经元的输入，$s_t$代表$t$时刻神经元的状态，$o_t$代表$t$时刻神经元的输出。
+循环神经网络(Recurrent Neural Networks, RNN)被广泛地运用在图像处理和自然语言处理上。与一般的神经网络相同，它也有前馈层和反馈层，但是它在一般的神经网络基础上增加了基于时序的循环机制。在一般的神经网络中，神经元之间相互独立，但是现实中的信息往往互相关联。所以，循环神经网络的特点像人一样有记忆的能力它的输出不仅依靠当前输入，也依靠历史的输出。在一定程度上，它更能反应真实的情况。
+
+RNN神经元的结构与BP神经网络神经元有些许不同。如图~\ref{fig:rnnc}所示，任一隐藏层中神经元的输出信息依靠当前时刻的输入信息和前序时序的输出信息决定，同时当前时序的输出信息也会作为下一个神经元的输入。这样的神经网络构建了神经元之间的联系，让数据有了更为有效的依赖关系，优化了信息利用的效率。
+每一个神经元的计算方式可以表述为式\eqref{eq:rnn}。其中$x_t$代表$t$时刻神经元的输入，$s_t$代表$t$时刻神经元的状态，$o_t$代表$t$时刻神经元的输出。
 \begin{equation}
   \begin{split}
     s_t = f(u· x_t + w · s_{t-1}), \\
@@ -68,6 +103,22 @@
 通过这三个门对神经元的共同作用，LSTM可以完成神经元的基本状态变换，从而完成较好的训练效果。
 
 \section{GAN生成模型选取使用}
+
+\subsection{基本原理}
+GANs的基本结构即由一个生成模型$G$和一个判别模型$D$组成。生成模型$G$的目的是尽可能最小化生成与真实训练样和生成样本的区别，而判别模型$D$的目的则是尽可能最大化地找出真实样本和生成样本之间的区别。
+
+通过多轮迭代生成模型$G$和判别模型$D$的对抗，可以使两个模型都达到上述的目标效果。当训练判别模型$D$的时候，希望输入真实样本$x$可以使判别器对其的判断$D(x)$尽量趋于1，而生成样本$G(x)$通过判别器$D$的时候可以使得$D(G(x))$尽量趋于0。在训练生成模型$G$的时候，输入噪声$z$，希望生成的生成样本通过判别器$D$的时候尽量使得$D(G(z))$趋于0。
+
+可以用简单的数学变换得到公式\eqref{eq:1.1}，来描述训练过程。
+\begin{equation}
+    \label{eq:1.1}
+    \min_{G}\max_{D} V_{G,D} = \mathbb{E}_{x \sim P_{data}(x)}[\lg D(x)] + \mathbb{E}_{z \sim P_{G}(z)}[\lg (1-D(G(z)))]
+\end{equation}
+其中$P_{data}(x)$为真实图片集的分布。
+
+当多轮博弈过后，极大极小问题达到最优解，即纳什均衡，当且仅当$P_z = P_{data}$时\upcite{goodfellow2014generative}。这时$\mathbb{E} D(G(z))$趋于$\frac{1}{2}$，即相当于只能随机猜测0与1，而生成模型$G$学会了真实样本的特性。
+
+相对于传统的生成模型，我们可以发现GANs模型并不需要使用马尔可夫链，学习过程不需要近似推理，也不需要预先训练，自由度比较高，可以利用反向传播计算梯度，很好地利用了分段线性单元的优势，而可以回避近似计算的困难概率问题。
 \subsection{基础GAN模型的缺陷}
 GANs模型的缺点对应着优点，比较明显。由于GANs模型自由度太高，在面对过于清晰的图片等训练样本时，收敛性表现较差，生成模型可能出现退化，重复生成相同样本点，导致判别器无法工作，进而导致模型崩溃。因此，在训练过程中，调整好两个模型网络的平衡与同步非常重要。
 
