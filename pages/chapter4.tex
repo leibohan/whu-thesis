@@ -1,6 +1,12 @@
 % Chapter 4
 
 \chapter{系统实现与验证分析}
+
+\section{引言}
+本章记录了实验中的情形。在实验中，我分别在实验环境下实现了两个模型，并分别使用不同的数据集在模型中进行训练，得到了较为理想的模型；然后将模型移动到本地，嵌入软件，实现翻译的功能，得到了一个友好、可用的用户交互界面。
+
+在实验记录和分析中，也记录了实验中遇到的问题，以及寻求到的解决方法。在实验中，我对模型的表现进行了量化和主观的评价，将结果附在了本章中。
+
 \section{实验环境}
 \subsection{模型训练环境}
 服务器环境，操作系统为
@@ -70,9 +76,6 @@ tensorflow在目前的稳定版本中，已经增加了很多新的借口，而1
 
         \text{pip\ install\ torchvision}
 
-\section{客户端运行检验}
-(图还没有做完)
-
 \section{实验分析与总结}
 \subsection{图片标注表现}
 对图片标注的模型，我选取了三个模型作为对比，使用BLEU评分\upcite{papineni2002bleu}（Bilingual Evaluation Understudy）的方式进行评价。
@@ -100,7 +103,7 @@ BLEU评分是IBM出品的机器翻译评分标准，按照式\eqref{eq:bleu}的�
         \toprule
         模型选择& BLEU-1 & BLEU-2& BLEU-3& BLEU-4 & METEOR\\
         \hline
-        断点模型  & & & & &——\\
+        %断点模型  & & & & &——\\
         弱关注模型 & 70.7\%&49.2\%&34.4\%&24.3\%&\textbf{23.90\%}\\
         强关注模型（我的训练）&70.3\% &\textbf{53.6\%}&\textbf{ 39.8\%}&\textbf{29.5\%}&——\\
         强关注模型（文中数据）& \textbf{71.8\%}&50.4\%&35.7\%&25.0\%&23.04\%\\
@@ -145,6 +148,13 @@ BLEU评分是IBM出品的机器翻译评分标准，按照式\eqref{eq:bleu}的�
 
 对于如下诗句，StackGAN模型和本文使用模型分别生成了如图~\ref{fig:sg2imcp}的两张截然不同的图像。显然，本文使用模型保留了大部分的位置关系，并且没有产生图像上的扭曲。从人类的视角来看，大部分人会认为当前算法产生的图片币StackGAN产生的效果要好。
 
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/sg2imeg.png}
+    \caption{比较StackGAN和本文算法的生成图像差异}
+    \label{fig:sg2imeg}
+\end{figure}
+
 A sheep by another sheep
 
 standing on the grass
@@ -155,11 +165,16 @@ beyond the tree next to the sheep.
 
 另外，在图~\ref{fig:sg2imeg}中可以清晰地从场景关系图的树状发展流程中，看到构成生成图片的过程。
 
+\section{系统总体运行效果}
+最终系统以用户界面呈现，可以实现双向的翻译效果。
+如图~\ref{fig:eff}所示，我选取了校园文化节中外籍学生与老师交流的场景，软件成功翻译出了‘a group of people standing arround a table’，而使用上一节中小诗的语句，可以生成相应的图像。
+
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/sg2imeg.png}
-    \caption{比较StackGAN和本文算法的生成图像差异}
-    \label{fig:sg2imeg}
+        \includegraphics[width=0.45\textwidth]{figures/img2txt.png}
+        \includegraphics[width=0.45\textwidth]{figures/txt2img.png}
+    \caption{系统总体运行效果}
+    \label{fig:eff}
 \end{figure}
 
 \section{本章小结}

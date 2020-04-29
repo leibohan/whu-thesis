@@ -252,7 +252,7 @@
     %\end{minipage}}
     \par \vspace*{4em}
     {\songti \zihao{1} BACHELOR'S DEGREE THESIS\par\vspace{1em}
-    OF WUHANUNIVERSITY}
+    OF WUHAN UNIVERSITY}
     \par \vspace{4em}
     \begin{minipage}[c][6cm]{14cm}
         \setlength{\baselineskip}{32pt} 
