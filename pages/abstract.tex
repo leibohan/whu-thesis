@@ -1,30 +1,28 @@
 % 中英文摘要
 
-\begin{cnabstract}{图片字幕；图片生成模型；生成对抗网络；长短期记忆}
-  近年来随着深度学习技术的不断发展，计算机视觉和自然语言处理成为了计算机科学与人工智能交叉领域研究热点。其中图片和语言之间的翻译技术 是人类可以直接利用的技术，包括图片字幕技术和文本生成图片的系列技术，解决这一问题需要计算机在某种程度上分拆图片和语言中的信息，通过一定的规则，智能地筛选其中的关键信息，并说出他们之间的关联。图片翻译文本技术，可以被用来处理海量图片信息，从整体描述他们的主要内容，辅助人类理解画面；而文字生成图片技术，则可以帮助人们直观地直到自己表述话语的意义，并借此减少交流中出现出现的偏差。因此，利用快速的图片翻译文本技术和文本生成图片技术来制作一个一般人可以轻易使用的软件具有重要意义。
+\begin{cnabstract}{推荐算法；深度学习；个性化推荐；DeepFM}
+  随着互联网的日渐普及，数据积累越来越丰富，已出现过载的现象。如何合
+理有效地挖掘数据的潜在价值，以辅助推动经济增长，是当前的一个热门话题。
 
-  本文通过调研，提出并设计了一套基于 技术的自然语言与图像互译系统，通过开发软件时训练好的相关模型，生成另一种格式的信息。本文的工作主要包括：
+  相比之需要用户抱有明确目的性去筛选信息的搜索引擎，推荐技术可以借助
+用户人口统计学属性和其交互行为等数据进行相关分析，进而实现自动地为用户
+推荐他们需求的信息的效果。鉴于此，推荐技术在近些年来一直是研究热点，其
+也随着时代日新月异。
 
-  （1）对输入图片的处理，使用简单的GCN网络从中提取特征向量，在LSTM网络中训练注意力机制函数的转移方法，用这一模型从图片中生成自然语言文本，实现图像向文本进行翻译的功能。
+本文基于推荐算法研究的考量，结合博物馆观众服务质量有待提高的需求，
+深入探究了基于因子分解机的神经网络模型框架。并基于此框架和深度神经网络 构建了 DeepFM-D 模型，实现了一种面向博物馆观众服务的个性化推荐。
 
-  （2）对输入文本的处理，使用NLP技术生成场景图，实现分三步的场景图像生成模型，并设计辨别器与之对抗，通过如此新建的GAN网络模型训练出对一般人来说更符合常理的复杂场景图像，实现文本向图像进行翻译的功能。
-
-  （3）创新性地提出将两种用途近似、目标人群耦合的技术合并为一个完整可用的系统，方便普通人中有需求的群体便捷地使用到这两项技术。
-
-  本文采用基于编码-解码结构的LSTM模型和基于影响力机制的GAN模型，分别复现了图像字幕技术和文本生成图像技术。从实验结果来看，本方案可以较好地实现文本和图像的互译功能。在后续迭代中，可以进一步提升数据集的丰富程度、针对模型的弱点加强训练，提高软件的翻译精度。
+本文对课题实验结果作了相关分析，从预测评分准确性和推荐列表输出准确 
+性两个角度出发，利用 FM、DNN 等不同算法模型在此评估标准上与 DeepFM-D 模型进行了推荐对比实验。实验结果表明，DeepFM-D 模型评估指标具有较明显 的优势，其效果的有效性得到验证。
 \end{cnabstract}
 
-\begin{enabstract}{Image Captioning; Text to Image; Generative Adversarial Networks Model; Long-short Term Memory}
-  With the development of deep learning technologies, computer vision and natural language processing have increasingly persuasively become a research hotspot in the crossing field of computer science and artificial intelligence. The technologies of translation between natural languages and images, including image captioning and image generative technologies based on texts, are for human beings' direct use. To implement the described function, it is necessary to extract and divide the features from the source format of information flows and generate an understandable version of target format information flow intelligently based on some specific rules. Image captioning can help users to process a huge amount of images and get the overall descriptions of them to help comprehension of the images, and text-to-image generation technology can help people to express there meaning with less deviation, on which people can rely to less the mistakes taking place during communications. Therefore, it is meaningful to make software to translate the images and texts to the other format readily with the two kinds of technologies for the people who need it.
-  
-  This paper proposes an image-language translation system based on investigation and research. By using the prepared model trained during the development of the software, the function of translation is realized. The main works in this paper are as follows:
+\begin{enabstract}{Recommendation Algorithm; Deep Learning; Personalized Recommendation; DeepFM}
+With the increasing popularity of the Internet, the accumulation of data is becoming more and more abundant, and there has been an overload phenomenon. How to mine the potential value of data reasonably and effectively to help promote economic growth is currently a hot topic.
 
-  (1)Use the naïve GCN to extract the feature vectors from each image in the input dataset. Train the transmitting rules of attention areas under an LSTM model, and generate natural caption with the model to realize the translation from images to lines in natural language.
+In contrast to search engines that require users to have a clear purpose to filter information, recommendation techniques can use data such as user demographic attributes and their interactive behaviors to perform relevant analysis, thereby achieving the effect of automatically recommending the information they need for users. In view of this, recommendation technology has been a research hotspot in recent years, and it also develops rapidly with the times.
 
-  (2)Process the input text with simple NLP dependency and generate a scene graph with the result. Realize a generative model based on three portions of the addition of objects and refinement, and design discriminators against them to produce a GAN model. Train a model with the GAN model to realize the translation from lines of text to images.
+In this paper, based on the consideration of the research of recommendation algorithms, combined with the needs of museum audience service quality to be improved, the neural network model framework based on factorization machine is deeply explored. Based on this framework and deep neural network, the DeepFM-D model is constructed to realize a personalized recommendation for museum audience services.
 
-  (3)Revolutionarily propose to integrate the two technologies as an easy-to-use system for ordinary people because the two technologies are faced with combined groups of people and integrated software can make it easier to use the technologies for the people who need it.
-
-  In this paper, an LSTM model based on decoder-encoder structure and a GAN model based on attention mechanism are used to recurrent the proper approaches of image captioning and text-to-image generating. From the experimental results, the project realized the translation between images and natural language scripts properly. In the later refinement works, we can improve the performance of the software by enriching the variety of datasets and training the model with the categories of examples with low precision.
+This paper makes a relevant analysis of the experimental results of this subject. From two perspectives of the accuracy of prediction scores and the accuracy of the output of the recommendation list, different algorithm models such as FM and DNN are used to compare and recommend the DeepFM-D model on this evaluation standard. The experimental results show that the evaluation index of DeepFM-D model has obvious advantages, and the effectiveness of its effect is verified.
 
 \end{enabstract}

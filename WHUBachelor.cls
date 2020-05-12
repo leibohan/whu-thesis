@@ -41,8 +41,8 @@
 \ctexset{chapter={format={\centering \heiti \zihao{-2}}, number={   % 各章标题 黑体小2号 // 修改：标题和数字字号一致 
     \arabic{chapter}},name={,},afterskip={0.5ex},beforeskip={0.8ex}}}
 \ctexset{section={format={\raggedright \heiti \zihao{4}}}}          % 一级标题 黑体 4号
-\ctexset{subsection={format={\raggedright \heiti \zihao{-4}}}}      % 二级标题 黑体小4号
-\ctexset{subsubsection={format={\raggedright \heiti \zihao{-4}}}}   % 三级标题 黑体小4号
+\ctexset{subsection={format={\raggedright \heiti \zihao{-4}},indent={1em}}}      % 二级标题 黑体小4号
+\ctexset{subsubsection={format={\raggedright \heiti \zihao{-4}},indent={2em}}}   % 三级标题 黑体小4号
 
 
 % 目录样式设置
@@ -238,37 +238,6 @@
       \end{tabular}}
     \par \vspace{4em}
     {\songti \zihao{-2} \@cdate}
-  \end{center}
-  \clearpage
-}
-% 论文英文标题页
-\def\maketitlepageE{
-  \thispagestyle{empty}
-  \begin{center}
-    %{\heiti \zihao{5} \hfill 
-    %\begin{minipage}[t]{4.5cm}
-     % 学号\ ：\uline{\hfill\hspace{3mm}\@stunum\hspace{3mm}\hfill} \\[2mm]
-      %密级\ ：\uline{\hfill \hfill}
-    %\end{minipage}}
-    \par \vspace*{4em}
-    {\songti \zihao{1} BACHELOR'S DEGREE THESIS\par\vspace{1em}
-    OF WUHAN UNIVERSITY}
-    \par \vspace{4em}
-    \begin{minipage}[c][6cm]{14cm}
-        \setlength{\baselineskip}{32pt} 
-        \centering {\heiti \zihao{2} \@ctitleE}
-    \end{minipage}
-    \par \vspace{6em}
-    {\songti \zihao{-3}
-      \begin{tabular}{cl}
-        \makebox[4cm][s]{College :} & \@cschoolE   \\[1ex]
-        \makebox[4cm][s]{Subject :} & \@cmajorE    \\[1ex]
-        \makebox[4cm][s]{Name  :} & \@cauthorE   \\[1ex]
-        \makebox[4cm][s]{Instructor:} & \@cadvisorE  \\[1ex]
-        & \@caadvisorE \\[1ex]
-      \end{tabular}}
-    \par \vspace{4em}
-    {\songti \zihao{-2} \@cdateE}
   \end{center}
   \clearpage
 }
